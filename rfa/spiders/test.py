@@ -63,7 +63,7 @@ class TestSpider(CrawlSpider):
             if not url:
                 print('RFA => [' + now + '] No url')
             else:
-                item['url'] = 'http://rfa.org/' + url.extract_first()
+                item['url'] = url.extract_first()
 
             description = col.xpath('h2[1]/following-sibling::text()')
             if not description:
@@ -96,7 +96,7 @@ class TestSpider(CrawlSpider):
             if not url:
                 print('RFA => [' + now + '] No url')
             else:
-                item['url'] = 'http://rfa.org/' + url.extract_first()
+                item['url'] = url.extract_first()
 
             description = col.xpath('h2[1]/following-sibling::text()')
             if not description:
