@@ -31,8 +31,6 @@ class MySQLPipeline(object):
         )
         self.stats = stats
         dispatcher.connect(self.spider_closed, signals.spider_closed)
-        now = time.strftime('%Y-%m-%d %H:%M:%S')
-        print('KSP =====> [' + now + '] DB Connected')
     def spider_closed(self, spider):
         """ Cleanup function, called after crawing has finished to close open
             objects.
@@ -45,7 +43,7 @@ class MySQLPipeline(object):
 
     def _insert_record(self, tx, item):
         now = time.strftime('%Y-%m-%d %H:%M:%S')
-        website_id = '11'
+        website_id = '10'
         tx.execute("SELECT 1 FROM NewsArticles WHERE url = %s", (item['url'], ))
         ret = tx.fetchone()
         if not ret:
