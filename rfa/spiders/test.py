@@ -38,13 +38,9 @@ class TestSpider(CrawlSpider):
         else:
             item['description'] = description.extract_first()
 
-        imageUrl = top_stories.xpath('//div[@id="topstorywideimg"]/a[1]/img[1]/@src')
-        if not imageUrl:
-            print('RFA => [' + now + '] No imageUrl')
-        else:
-            item['imageUrl'] = imageUrl.extract_first()
-
-        yield item
+        request = scrapy.Request(item['url'], callback=self.parse_detail)
+        request.meta['item'] = item
+        yield request
 
         ## COL A
 
@@ -71,13 +67,9 @@ class TestSpider(CrawlSpider):
             else:
                 item['description'] = description.extract_first()
 
-            imageUrl = col.xpath('div[@class="teaserimg"][1]/a[1]/img[1]/@src')
-            if not imageUrl:
-                print('RFA => [' + now + '] No imageUrl')
-            else:
-                item['imageUrl'] = imageUrl.extract_first()
-
-            yield item
+            request = scrapy.Request(item['url'], callback=self.parse_detail)
+            request.meta['item'] = item
+            yield request
 
         # COL_B
 
@@ -104,13 +96,9 @@ class TestSpider(CrawlSpider):
             else:
                 item['description'] = description.extract_first()
 
-            imageUrl = col.xpath('div[@class="teaserimg"][1]/a[1]/img[1]/@src')
-            if not imageUrl:
-                print('RFA => [' + now + '] No imageUrl')
-            else:
-                item['imageUrl'] = imageUrl.extract_first()
-
-            yield item
+            request = scrapy.Request(item['url'], callback=self.parse_detail)
+            request.meta['item'] = item
+            yield request
 
 
 
@@ -119,18 +107,12 @@ class TestSpider(CrawlSpider):
         hxs = scrapy.Selector(response)
         now = time.strftime('%Y-%m-%d %H:%M:%S')
 
-        item_page = hxs.css('div.item-page')
-        description = item_page.xpath('p[1]/text()')
-        if not description:
-            print('ThmeyThmey => [' + now + '] No description')
-        else:
-            item['description'] = item_page.xpath('p[1]/strong/text()').extract_first() + ' ' + description.extract_first()
-
-        imageUrl = item_page.xpath('p[last()]/img/@src')
+        imageUrl = hxs.xpath('//div[@id="headerimg"][1]/img[1]/@src')
+        print(imageUrl)
         if not imageUrl:
-            print('ThmeyThmey => [' + now + '] No imageUrl')
+            item['imageUrl'] = ''
+            print('RFA => [' + now + '] No imageUrl')
         else:
             item['imageUrl'] = imageUrl.extract_first()
-
 
         yield item
