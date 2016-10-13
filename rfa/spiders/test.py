@@ -108,7 +108,6 @@ class TestSpider(CrawlSpider):
         now = time.strftime('%Y-%m-%d %H:%M:%S')
 
         imageUrl = hxs.xpath('//div[@id="headerimg"][1]/img[1]/@src')
-        print(imageUrl)
         if not imageUrl:
             item['imageUrl'] = ''
             print('RFA => [' + now + '] No imageUrl')
