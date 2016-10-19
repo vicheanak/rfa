@@ -4,6 +4,8 @@ from scrapy.spiders import CrawlSpider, Rule
 from rfa.items import RfaItem
 from scrapy.linkextractors import LinkExtractor
 import time
+import lxml.etree
+import lxml.html
 
 
 class TestSpider(CrawlSpider):
@@ -107,11 +109,23 @@ class TestSpider(CrawlSpider):
         hxs = scrapy.Selector(response)
         now = time.strftime('%Y-%m-%d %H:%M:%S')
 
+
+        root = lxml.html.fromstring(response.body)
+        lxml.etree.strip_elements(root, lxml.etree.Comment, "script", "head")
+        htmlcontent = ''
+        for p in root.xpath('//div[@id="storytext"][1]'):
+            # htmlcontent = lxml.html.tostring(p, method="text", encoding=unicode)
+            htmlcontent = lxml.html.tostring(p, encoding=unicode)
+        item['htmlcontent'] = htmlcontent
+
         imageUrl = hxs.xpath('//div[@id="headerimg"][1]/img[1]/@src')
         item['imageUrl'] = ''
         if not imageUrl:
             print('RFA => [' + now + '] No imageUrl')
         else:
             item['imageUrl'] = imageUrl.extract_first()
+            for m in root.xpath('//div[@id="headerimg"][1]/img[1]'):
+                img = lxml.html.tostring(m, encoding=unicode)
+                item['htmlcontent'] = img + item['htmlcontent']
 
         yield item
