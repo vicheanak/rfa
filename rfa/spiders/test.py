@@ -6,7 +6,8 @@ from scrapy.linkextractors import LinkExtractor
 import time
 import lxml.etree
 import lxml.html
-
+from stripogram import html2text, html2safehtml
+from htmlmin import minify
 
 class TestSpider(CrawlSpider):
     name = "rfa"
@@ -114,8 +115,11 @@ class TestSpider(CrawlSpider):
         lxml.etree.strip_elements(root, lxml.etree.Comment, "script", "head")
         htmlcontent = ''
         for p in root.xpath('//div[@id="storytext"][1]'):
-            # htmlcontent = lxml.html.tostring(p, method="text", encoding=unicode)
-            htmlcontent = lxml.html.tostring(p, encoding=unicode)
+            uglyhtml = lxml.html.tostring(p, encoding=unicode)
+            clean_html = html2safehtml(uglyhtml, valid_tags=("p", "img"))
+            minified_html = minify(clean_html)
+            htmlcontent = minified_html
+
         item['htmlcontent'] = htmlcontent
 
         imageUrl = hxs.xpath('//div[@id="headerimg"][1]/img[1]/@src')
